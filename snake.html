@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jogo Da Cobrinha</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <canvas id="palco" width="400" height="400"></canvas>
+    <!--tamanho do palco-->
+    <script type="text/javascript">
+      window.onload = function () {
+        var palco = document.getElementById("palco");
+        var context = palco.getContext("2d");
+        document.addEventListener("keydown", keyPush);
+        setInterval(jogo, 80); //define o intervalor da função
+
+        const velocidade = 1;
+        var velocidadex = (velocidadey = 0);
+        var pontox = 10;
+        var pontoy = 15;
+        var tamapeça = 20; //tamanho da peça no tabuleiro
+        var quantpeça = 20; //quantidade de peças
+        var maçãx = (maçãy = 15); //posição da maçã
+
+        //define o tamanho da calda da cobra e seu rastro
+        var rastro = [];
+        calda = 3;
+
+        //posição dos elementos
+        function jogo() {
+          pontox += velocidadex;
+          pontoy += velocidadey;
+          if (pontox < 0) {
+            pontox = quantpeça - 1;
+          }
+          if (pontox > quantpeça - 1) {
+            pontox = 0;
+          }
+          if (pontoy < 0) {
+            pontoy = quantpeça - 1;
+          }
+          if (pontoy > quantpeça - 1) {
+            pontoy = 0;
+          }
+
+          context.fillStyle = "black"; //cor do palco
+          context.fillRect(0, 0, palco.width, palco.height);
+
+          context.fillStyle = "red"; //cor do alimento
+          context.fillRect(
+            maçãx * tamapeça,
+            maçãy * tamapeça,
+            tamapeça,
+            tamapeça
+          );
+
+          context.fillStyle = "white"; //cor da cobrinha
+          for (var i = 0; i < rastro.length; i++) {
+            context.fillRect(
+              rastro[i].x * tamapeça,
+              rastro[i].y * tamapeça,
+              tamapeça - 1,
+              tamapeça - 1
+            );
+            if (rastro[i].x == pontox && rastro[i].y == pontoy) {
+              velocidadex = velocidadey = 0; //reinicia o jogo
+              calda = 3;
+            }
+          }
+
+          //aumentar a calda da cobra
+          rastro.push({ x: pontox, y: pontoy });
+          while (rastro.length > calda) {
+            rastro.shift();
+          }
+          if (maçãx == pontox && maçãy == pontoy) {
+            calda++;
+            maçãx = Math.floor(Math.random() * quantpeça);
+            maçãy = Math.floor(Math.random() * quantpeça);
+          }
+        }
+        //movimentação
+        function keyPush(event) {
+          switch (event.keyCode) {
+            case 37: //tecla seta para esquerda
+              velocidadex = -velocidade;
+              velocidadey = 0;
+              break;
+            case 38: //tecla seta para cima
+              velocidadex = 0;
+              velocidadey = -velocidade;
+              break;
+            case 39: //tecla seta para direita
+              velocidadex = velocidade;
+              velocidadey = 0;
+              break;
+            case 40: //tecla seta para baixo
+              velocidadex = 0;
+              velocidadey = velocidade;
+              break;
+            default:
+              break;
+          }
+        }
+      };
+    </script>
+  </body>
+</html>
